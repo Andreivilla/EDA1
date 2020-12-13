@@ -1,6 +1,6 @@
 #include "util.h"
 char menu(){
-    char *vetop = "012345678";
+    char *vetop = "01234567";
 	char op;
     int i;
     while(1){       
@@ -12,9 +12,8 @@ char menu(){
         printf("5 - inserir valor no inicio da lista\n");
         printf("6 - inserir valor no final da lista\n");
         printf("7 - inserir valor ordenado na lista\n");
-        //printf("7 - incluir funcionarios\n");
-        //printf("8 - remover um funcionario\n");
         printf("0 - sair\n");
+
         scanf("%c", &op);fflush(stdin);
         for(i=0; i<9; i++){
             if(vetop[i] == op)
@@ -29,7 +28,7 @@ celula* crialista(int tam){
     no = (celula*) malloc(sizeof(celula));
     lista = no;
     if(no == NULL){
-        printf("erro de alocacao");
+        printf("erro de alocacao");fflush(stdin);
     }else{
         for(i=0; i<tam; i++){
             //no->conteudo = 0;
@@ -50,7 +49,7 @@ void printLista(celula *lista){
         lista = lista->prox;
     }
 }
-int nLista(celula *lista){
+int lenLista(celula *lista){
     int count=0;
     while(lista->prox != NULL){
         count++;
@@ -76,45 +75,60 @@ int posiValor(celula *lista, int valor){
     
     return -1;
 }
-celula* addInicio(celula *lista){
+celula* addInicio(celula *lista, int valor){
     celula *add;
     add = (celula*) malloc(sizeof(celula));
-    printf("Digite um valor: ");
-    scanf("%d", &add->conteudo);
+    add->conteudo = valor;
     add->prox = lista;
     return add;
 }
-void addFinal(celula *lista){
+void addFinal(celula *lista, int valor){
     while(lista->prox != NULL){
-        printf("%d\n", lista->conteudo);
         if(lista->prox == NULL)
             lista->prox = (celula*) malloc(sizeof(celula));
         else
             lista = lista->prox;
     }
-    
-    printf("Digite um valor: ");
-    scanf("%d", &lista->conteudo);
-    printf("conteudo fora: %d\n", lista->conteudo);
+    lista->conteudo = valor;
     lista->prox = (celula*) malloc(sizeof(celula));
     lista = lista->prox;
     lista->prox = NULL;
 }
-void addOrdenado(celula *lista){
-    int i, posicao;
+void addmeio(celula *lista, int posicao, int valor){
+    int i;
     celula *novo = (celula*) malloc(sizeof(celula));
     celula *aux = (celula*) malloc(sizeof(celula));
-
-    printf("qual posicao adicionar(0-n)? ");
-    scanf("%d", &posicao);
-    printf("Inserir Valor: ");
-    scanf("%d", &novo->conteudo);
-
-    for(i=0; i<posicao-1; i++){
+    /*if(posicao == 0){
+        lista = addInicio(lista, valor);
+    }else if(posicao == lenLista(lista)-1){
+        addFinal(lista, valor);
+    }else{*/
+    novo->conteudo = valor;
+    for(i=0; i<posicao; i++){
         lista = lista->prox;
     }
     aux = lista->prox;
     lista->prox = novo;
     novo->prox = aux;
-    printf("%d\n", lista->conteudo);
+}
+celula* inserirOrdenado(celula *lista, int valor){
+    int posi = 0;
+    celula *posicao = (celula*) malloc(sizeof(celula));
+    posicao = lista;
+    while(posicao->prox != NULL){
+        if(posicao->prox->conteudo > valor){
+            break;
+        }
+        posicao = posicao->prox;
+        posi++;
+    }
+    if(posi == 0){
+        lista = addInicio(lista, valor);
+        printLista(lista);
+    }else if(posi == lenLista(lista)-1){
+        addFinal(lista, valor);
+    }else{
+        addmeio(lista, posi, valor);
+    }
+    return lista;
 }

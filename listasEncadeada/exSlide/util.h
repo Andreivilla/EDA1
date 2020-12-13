@@ -8,8 +8,9 @@ typedef struct reg{
 char menu();
 celula* crialista(int);
 void printLista(celula*);
-int nLista(celula*);
+int lenLista(celula*);
 int posiValor(celula *lista, int valor);
-celula* addInicio(celula *lista);
-void addFinal(celula *lista);
-void addOrdenado(celula *lista);
+celula* addInicio(celula *lista, int valor);
+void addFinal(celula *lista, int valor);
+void addmeio(celula *lista, int posicao, int valor);
+celula* inserirOrdenado(celula *lista, int valor);

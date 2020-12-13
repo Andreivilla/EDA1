@@ -2,6 +2,7 @@
 int main(int agrc, char *argv[]){
     celula *lista;
     int tam, valor;
+    //printf("fesfsef");
     while (1){
         switch (menu()){
             case '0':
@@ -9,7 +10,7 @@ int main(int agrc, char *argv[]){
                 break;
             case '1':
                 printf("Tamanho da lista: ");
-                scanf("%d", &tam);
+                scanf("%d", &tam);fflush(stdin);
                 lista = crialista(tam);
                 break;
             case '2':
@@ -19,24 +20,30 @@ int main(int agrc, char *argv[]){
                 break;
             case '3':
                 printf("\n----TAMANHO DA LISTA----\n");
-                printf("%d", nLista(lista));
+                printf("%d", lenLista(lista));
                 printf("\n--------------------\n");
                 break;
             case '4':
                 printf("\n----POSICAO DO VALOR----\n");
                 printf("Que valor procurar: ");
-                scanf("%d", &valor);
+                scanf("%d", &valor);fflush(stdin);
                 printf("%d", posiValor(lista, valor));
                 printf("\n--------------------\n");
                 break;
             case '5':
-                lista = addInicio(lista);
+                printf("Digite um valor: ");
+                scanf("%d", &valor);
+                lista = addInicio(lista, valor);
                 break;
             case '6':
-                addFinal(lista);
+                printf("Digite um valor: ");
+                scanf("%d", &valor);fflush(stdin);
+                addFinal(lista, valor);
                 break;
             case '7':
-                addOrdenado(lista);
+                printf("Digite um valor: ");
+                scanf("%d", &valor);fflush(stdin);
+                lista = inserirOrdenado(lista, valor);
                 break;
         }
     }

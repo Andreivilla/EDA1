@@ -23,21 +23,26 @@ char menu(){
     }
 }
 celula* crialista(int tam){
-    int i;
+    int i, valor;
     celula *no, *lista = NULL;
     no = (celula*) malloc(sizeof(celula));
     lista = no;
     if(no == NULL){
-        printf("erro de alocacao\n");
+        printf("erro de alocacao");
     }else{
-        for(i=0; i<tam; i++){
-            printf("valor %d: ", i);
-            scanf("%d", &no->conteudo);
-            no->prox = (celula*) malloc(sizeof(celula));
-            no = no->prox;
-        }
+        printf("valor: ");
+        scanf("%d", &no->conteudo);fflush(stdin);
+        no->prox = (celula*) malloc(sizeof(celula));
+        no->ant = (celula*) malloc(sizeof(celula));
+        no = no->prox;
     }
-    no->prox = NULL;    
+    for(i=0; i<tam;i++){
+        printf("Digite um valor: ");
+        scanf("%d", &valor);fflush(stdin);
+        addFinal(lista, valor);
+    }
+    no->ant = NULL;
+    no->prox = NULL;
     return lista;
 }
 void printLista(celula *lista){
@@ -48,6 +53,7 @@ void printLista(celula *lista){
         lista = lista->prox;
     }
 }
+/*
 int lenLista(celula *lista){
     int count=0;
     while(lista->prox != NULL){
@@ -80,19 +86,24 @@ celula* addInicio(celula *lista, int valor){
     add->conteudo = valor;
     add->prox = lista;
     return add;
-}
+}*/
 void addFinal(celula *lista, int valor){
+    celula *p = (celula*) malloc(sizeof(celula));
+    
     while(lista->prox != NULL){
         if(lista->prox == NULL)
             lista->prox = (celula*) malloc(sizeof(celula));
-        else
-            lista = lista->prox;
+            lista->ant = p;
+        else{
+            lista = lista->prox;            
+        }
     }
     lista->conteudo = valor;
     lista->prox = (celula*) malloc(sizeof(celula));
     lista = lista->prox;
     lista->prox = NULL;
 }
+/*
 void addmeio(celula *lista, int posicao, int valor){
     int i;
     celula *novo = (celula*) malloc(sizeof(celula));
@@ -126,4 +137,4 @@ celula* inserirOrdenado(celula *lista, int valor){
         addmeio(lista, posi, valor);
     }
     return lista;
-}
+}*/

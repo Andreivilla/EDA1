@@ -3,9 +3,6 @@ char menu(){
     int opiscoes[9] = {0, 1, 2, 3, 4, 5, 6, 7, 8};
     int op;
     int i;
-    fflush(stdin);
-    printf("|-----------------------------------------|\n");
-    printf("|        CADASTRO DE TAREFAS              |\n");
     printf("|_________________________________________|\n");
     printf("|           MENU DE OPCOES                |\n");
     printf("|-----------------------------------------|\n");
@@ -76,7 +73,9 @@ void print_filas(Fila *f){
         while(fila->prox != NULL){
             printf("%2.2f\n", fila->info);
             fila = fila->prox;
-        }        
+        }
+        fila = f->fim;
+        printf("%2.2f\n", fila->info);        
     }
 }
 void executar(Fila *f1, Fila *f2, Fila *f3){

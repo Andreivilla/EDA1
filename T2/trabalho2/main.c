@@ -1,9 +1,9 @@
 #include"util.h"
 int main(int agrc, char *argv[]){
     int id;
-    tarefa *lista_tarefas = NULL;
-
-    lista_tarefas = (tarefa*) malloc(sizeof(tarefa));
+    tarefa *lista_tarefas = (tarefa*) malloc(sizeof(tarefa));
+    tarefa *lista_tarefas_dia = (tarefa*) malloc(sizeof(tarefa));
+    lista_tarefas->prox = NULL;
     lista_tarefas->id = 0;
     lista_tarefas->prox = NULL;
     while(1){
@@ -26,16 +26,19 @@ int main(int agrc, char *argv[]){
                 break;
             case '5'://CARREGAR ARQUIVO DE TAREFAS
                 carregar_arquivo(lista_tarefas);
-                break;
-            case '6'://GERAR ARQUIVO DE TAREFAS
-                salvar(lista_tarefas);
                 printf("\n--arquivos baixados--\n");
                 break;
+            case '6'://GERAR ARQUIVO DE TAREFAS
+                salvar(lista_tarefas, 1);
+                printf("\n--arquivos salvos--\n");
+                break;
             case '7'://COMPUTAR AGENDA DO DIA
-                printf("...\n");
+                    agenda_do_dia(lista_tarefas, lista_tarefas_dia);
+                    visualizar_tarefas(lista_tarefas_dia);
                 break;
             case '8'://SALVARA AGENDA DO DIA
-                printf("...\n");
+                salvar(lista_tarefas_dia, 2);
+                printf("--arquivos salvos--\n");
                 break;
             case '0'://SAIR
                 return 0;

@@ -30,6 +30,12 @@ char menu(){
     }    
 }
 void visualizar_tarefas(tarefa *lista){
+    if(lista->prox == NULL){
+        printf("|-----------------------------------------|\n");
+        printf("|           NAO POSSUI PAREFAS            |\n");
+        printf("|-----------------------------------------|\n");
+        return;
+    }
     printf("|-----------------------------------------|\n");
     printf("|           TAREFAS CADASTRADAS           |\n");
     printf("|-----------------------------------------|\n");
@@ -119,10 +125,18 @@ void salvar_linha(tarefa *t, FILE *fl){
     fprintf(fl, "%d/%d/%d %d:%d, ", t->dados.inicio.dia, t->dados.inicio.mes,t->dados.inicio.ano, t->dados.inicio.hora, t->dados.inicio.minuto);
     fprintf(fl, "%d, %d/%d/%d %d:%d \n",  t->dados.duracao, t->dados.deadline.dia, t->dados.deadline.mes, t->dados.deadline.ano,t->dados.deadline.hora,t->dados.deadline.minuto);
 }
-void salvar(tarefa *lista){
-    FILE *f = fopen("tarefas.txt", "wb");
-    printf("tem q ter aberto krl\n");
-    fputc('c', f);
+void salvar(tarefa *lista, int op){
+    FILE *f;
+    if(op == 1)
+        f = fopen("tarefas.txt", "wb");
+    else if(op == 2)
+        f = fopen("tarefasdia.txt", "wb");
+    else{
+        printf("erro\n");
+        return;
+    }    
+    if(f == NULL)
+        printf("erro");
     while(lista->prox != NULL){
         salvar_linha(lista, f);
         lista = lista->prox;
@@ -148,17 +162,17 @@ void ler_linha(tarefa *t, FILE *fl){
 }
 
 void carregar_arquivo(tarefa *lista){
-    //tarefa *aux = (tarefa*) malloc(sizeof(tarefa));
     FILE *fl = fopen("tarefas.txt", "r");
+    if(fl == NULL){
+        printf("erro\n");
+        return;
+    }
     int i, n_linhas=1;
     char c;
     while(!feof(fl)){
         c = fgetc(fl);
-        if(c == '\n'){
-            printf("a%c", c);
-            n_linhas++;
-            printf("n linhas: %d\n", n_linhas);
-        }
+        if(c == '\n')
+            n_linhas++;        
     }
     rewind(fl);
     for(i=0; i<n_linhas;i++){
@@ -170,9 +184,47 @@ void carregar_arquivo(tarefa *lista){
     fclose(fl);
 }
 
+void agenda_do_dia(tarefa *lista, tarefa *lista_dia){
+    struct tm *local;
+    time_t t;
+    int dia, mes ,ano;
+    //pegando data atual
+    t = time(NULL);
+    local=localtime(&t);
+    dia=local->tm_mday;
+    mes=local->tm_mon+1;
+    ano=local->tm_year+1900;
+
+    //lista_dia = aux;
+
+    //criando lista do dia
+    while(lista->prox != NULL){
+        if(lista->dados.inicio.dia == dia && lista->dados.inicio.mes == mes && lista->dados.inicio.ano == ano){
+            strcpy(lista_dia->dados.nome, lista->dados.nome);
+            lista_dia->id = lista->id;
+            lista_dia->dados.inicio.dia = lista->dados.inicio.dia;
+            lista_dia->dados.inicio.mes = lista->dados.inicio.mes;
+            lista_dia->dados.inicio.ano = lista->dados.inicio.ano;
+            lista_dia->dados.inicio.hora = lista->dados.inicio.hora;
+            lista_dia->dados.inicio.minuto = lista->dados.inicio.minuto;
+            lista_dia->dados.deadline.dia = lista->dados.deadline.dia;
+            lista_dia->dados.deadline.mes = lista->dados.deadline.mes;
+            lista_dia->dados.deadline.ano = lista->dados.deadline.ano;
+            lista_dia->dados.deadline.hora = lista->dados.deadline.hora;
+            lista_dia->dados.deadline.minuto = lista->dados.deadline.minuto;
+            lista_dia->dados.duracao = lista->dados.duracao;
+            lista_dia->prox = (tarefa*) malloc(sizeof(tarefa));
+            lista_dia = lista_dia->prox;
+            lista_dia->prox = NULL;            
+        }       
+        lista = lista->prox;
+        
+    }
+}
+
 //apagar
 void printa_tarefa(tarefa *t){
-    printf("\n\n-%s-\n\n", t->dados.nome);
+    printf("\n\n- %s -\n\n", t->dados.nome);
     printf("ID: %d\n", t->id);
     printf("Inicio: %d/%d/%d \t",  t->dados.inicio.dia, t->dados.inicio.mes, t->dados.inicio.ano);
     printf("%d:%d\n", t->dados.inicio.hora, t->dados.inicio.minuto);
@@ -180,3 +232,19 @@ void printa_tarefa(tarefa *t){
     printf("%d:%d\n", t->dados.deadline.hora, t->dados.deadline.minuto);
     printf("Duracao: %d\n", t->dados.duracao);
 }
+
+
+            //desespero
+            /*strcpy(lista_dia->dados.nome, lista->dados.nome);
+            lista_dia->id = lista->id;
+            lista_dia->dados.inicio.dia = lista->dados.inicio.dia;
+            lista_dia->dados.inicio.mes = lista->dados.inicio.mes;
+            lista_dia->dados.inicio.ano = lista->dados.inicio.ano;
+            lista_dia->dados.inicio.hora = lista->dados.inicio.hora;
+            lista_dia->dados.inicio.minuto = lista->dados.inicio.minuto;
+            lista_dia->dados.deadline.dia = lista->dados.deadline.dia;
+            lista_dia->dados.deadline.mes = lista->dados.deadline.mes;
+            lista_dia->dados.deadline.ano = lista->dados.deadline.ano;
+            lista_dia->dados.deadline.hora = lista->dados.deadline.hora;
+            lista_dia->dados.deadline.minuto = lista->dados.deadline.minuto;
+            lista_dia->dados.duracao = lista->dados.duracao;*/

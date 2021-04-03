@@ -1,5 +1,8 @@
 #include<stdio.h>
 #include<stdlib.h>
+#include<string.h>
+#include<time.h>
+
 typedef struct{
     int dia;
     int mes;
@@ -33,8 +36,13 @@ void editar_tarefa(tarefa *lista, int id);
 void carregar_arquivo(tarefa *lista);
 void ler_linha(tarefa *t, FILE *fl);
 void salvar_linha(tarefa *t, FILE *fl);
-void salvar(tarefa *lista);
+void salvar(tarefa *lista, int);
+
+//tarefas do dia
+void agenda_do_dia(tarefa *lista, tarefa*);
 
 
 //apagar 
 void printa_tarefa(tarefa *t);
+void agenda_do_dia(tarefa *lista, tarefa*);
+

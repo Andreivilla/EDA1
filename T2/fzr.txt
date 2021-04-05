@@ -1,7 +1,7 @@
 entradas dos horarios corrigir pfvr 
 os erros q ele reclamou
 carregar sem salvar perde o salvo botar no programa
-fzr as duas funções q faltam
+FEITO P KRL TLG ---------------fzr as duas funções q faltam
 inventa o readme pra esse chato
 escovar o codigo pra solar esse fdp
 arruma a porra da duração pelo amor

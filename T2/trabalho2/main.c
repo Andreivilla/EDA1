@@ -2,8 +2,7 @@
 int main(int agrc, char *argv[]){
     int id;
     tarefa *lista_tarefas = (tarefa*) malloc(sizeof(tarefa));
-    tarefa *lista_tarefas_dia = (tarefa*) malloc(sizeof(tarefa));
-    lista_tarefas->prox = NULL;
+    tarefa *lista_tarefas_dia ;
     lista_tarefas->id = 0;
     lista_tarefas->prox = NULL;
     while(1){
@@ -33,12 +32,14 @@ int main(int agrc, char *argv[]){
                 printf("\n--arquivos salvos--\n");
                 break;
             case '7'://COMPUTAR AGENDA DO DIA
-                    agenda_do_dia(lista_tarefas, lista_tarefas_dia);
+                    lista_tarefas_dia = agenda_do_dia(lista_tarefas);
                     visualizar_tarefas(lista_tarefas_dia);
+                    
                 break;
             case '8'://SALVARA AGENDA DO DIA
                 salvar(lista_tarefas_dia, 2);
                 printf("--arquivos salvos--\n");
+                
                 break;
             case '0'://SAIR
                 return 0;

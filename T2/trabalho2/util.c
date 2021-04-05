@@ -30,7 +30,8 @@ char menu(){
     }    
 }
 void visualizar_tarefas(tarefa *lista){
-    if(lista->prox == NULL){
+    
+    if(lista->prox == NULL || lista == NULL){
         printf("|-----------------------------------------|\n");
         printf("|           NAO POSSUI PAREFAS            |\n");
         printf("|-----------------------------------------|\n");
@@ -67,26 +68,74 @@ void add_tarefa(tarefa *lista){
     lista->prox = NULL;
 }
 void add_tempo(tempo *tmp){
-    printf("Dia: ");
-    scanf("%d", &tmp->dia);
-    printf("Mes: ");
-    scanf("%d", &tmp->mes);
-    printf("Ano: ");
-    scanf("%d", &tmp->ano);
-    printf("Hora: ");
-    scanf("%d", &tmp->hora);
-    printf("Minuto: ");
-    scanf("%d", &tmp->minuto);
-
+    while(1){
+        fflush(stdin);
+        printf("Dia: ");
+        scanf("%d", &tmp->dia);
+        printf("Mes: ");
+        scanf("%d", &tmp->mes);
+        printf("Ano: ");
+        scanf("%d", &tmp->ano);
+        printf("Hora: ");
+        scanf("%d", &tmp->hora);
+        printf("Minuto: ");
+        scanf("%d", &tmp->minuto);
+        if(verifica_data(tmp->dia, tmp->mes, tmp->ano, tmp->hora, tmp->minuto) == 1)
+            return;
+    }
 }
+int verifica_data(int dia, int mes, int ano, int hora, int minuto){
+    struct tm *local;
+    time_t t;
+    t = time(NULL);
+    local=localtime(&t);
+
+    if(hora > 24 || hora < 0){
+        printf("ERRO: hora ivalida\n");
+        return(0);
+    }else if (minuto > 60 || minuto < 0){
+        printf("ERRO: minuto invalido\n");
+        return(0);
+    }else if(mes > 12 || mes < 0 || mes < local->tm_mon+1){
+        printf("ERRO: mes invalido\n");
+        return(0);
+    }else if(ano < local->tm_year+1900){
+        printf("ERRO: ano invalido\n");
+        return(0);
+    }else if(dia > 31 || dia < 0 || dia < local->tm_mday){
+        printf("ERRO: dia invalido\n");
+        return(0);
+    }else if(mes == 4 || mes == 6 || mes == 9 || mes == 11){
+        if(dia > 30){
+            printf("ERRO: dia invalido\n");
+            return(0);
+        }
+    }else if(mes == 2){
+        if(ano%4==0){
+            if(dia > 29){
+                printf("ERRO: dia invalido\n");
+                return(0);
+            }
+        }else{
+            if(dia > 28){
+                printf("ERRO: dia invalido\n");
+                return(0);
+            }
+        }
+    }else{
+        return (1);
+    }
+    return(1);
+}
+
 void add_reg(reg *regis){
     printf("---Inicio---\n");
         add_tempo(&regis->inicio);
     printf("---Deadline---\n");
         add_tempo(&regis->deadline);
         
-    regis->duracao = (60*regis->deadline.hora + regis->deadline.minuto) - (60*regis->inicio.hora + regis->inicio.minuto);
-
+    printf("---Duracao---\n");
+    scanf("%d", &regis->duracao);
 }
 tarefa* remove_tarefa(tarefa *lista, int id){
     tarefa *aux1 = (tarefa*) malloc(sizeof(tarefa));
@@ -167,7 +216,7 @@ void carregar_arquivo(tarefa *lista){
         printf("erro\n");
         return;
     }
-    int i, n_linhas=1;
+    int i, n_linhas=0;
     char c;
     while(!feof(fl)){
         c = fgetc(fl);
@@ -177,14 +226,153 @@ void carregar_arquivo(tarefa *lista){
     rewind(fl);
     for(i=0; i<n_linhas;i++){
         ler_linha(lista, fl);
+        //printa_tarefa(lista);
         lista->prox = (tarefa*) malloc(sizeof(tarefa));
         lista = lista->prox;
         lista->prox = NULL;
     }
     fclose(fl);
 }
+tarefa *agenda_do_dia(tarefa *lista){
+    struct tm *local;
+    tarefa *lista_dia = (tarefa*) malloc(sizeof(tarefa));
+    lista_dia->prox = NULL;
+    tarefa *a = lista_dia;
+    time_t t;
+    //pegando data atual
+    t = time(NULL);
+    local=localtime(&t);
 
-void agenda_do_dia(tarefa *lista, tarefa *lista_dia){
+
+    //criando lista do dia
+    while(lista->prox != NULL){
+        if(lista->dados.inicio.dia == local->tm_mday && lista->dados.inicio.mes == local->tm_mon+1 && lista->dados.inicio.ano == local->tm_year+1900){
+            strcpy(lista_dia->dados.nome, lista->dados.nome);
+            lista_dia->id = lista->id;
+            lista_dia->dados.inicio.dia = lista->dados.inicio.dia;
+            lista_dia->dados.inicio.mes = lista->dados.inicio.mes;
+            lista_dia->dados.inicio.ano = lista->dados.inicio.ano;
+            lista_dia->dados.inicio.hora = lista->dados.inicio.hora;
+            lista_dia->dados.inicio.minuto = lista->dados.inicio.minuto;
+            lista_dia->dados.deadline.dia = lista->dados.deadline.dia;
+            lista_dia->dados.deadline.mes = lista->dados.deadline.mes;
+            lista_dia->dados.deadline.ano = lista->dados.deadline.ano;
+            lista_dia->dados.deadline.hora = lista->dados.deadline.hora;
+            lista_dia->dados.deadline.minuto = lista->dados.deadline.minuto;
+            lista_dia->dados.duracao = lista->dados.duracao;
+            lista_dia->prox = (tarefa*) malloc(sizeof(tarefa));
+            lista_dia = lista_dia->prox;
+            lista_dia->prox = NULL;            
+        }
+        lista = lista->prox;
+    }
+    visualizar_tarefas(a);
+    a = mergeSort(a);
+    visualizar_tarefas(a);
+    return a;
+}
+
+//ordenação
+tarefa *merge(tarefa *e, tarefa *d){
+    tarefa *l, *p;
+    l=NULL;
+    while(e!=NULL && d!=NULL){
+        if((e->dados.deadline.hora*60 + e->dados.deadline.minuto < (d->dados.deadline.hora*60 + d->dados.deadline.minuto) && e->dados.duracao < d->dados.duracao)){
+            if(l==NULL){
+                p=l=e;
+                e=e->prox;
+            }
+            else{
+            p->prox=e;
+            e=e->prox;
+            p=p->prox;
+            }
+        }else{
+            if(l==NULL){
+                p=l=d;
+                d=d->prox;
+            }else{
+                p->prox=d;
+                d=d->prox;
+                p=p->prox;
+            }
+        }
+    }
+    if(e==NULL){
+        while(d!=NULL){
+            p->prox=d;
+            d=d->prox;
+            p=p->prox;
+        }
+    }
+    if(d==NULL){
+        while(e!=NULL){
+            p->prox=e;
+            e=e->prox;
+            p=p->prox;
+        }
+    }
+    return(l);
+}
+
+tarefa *split(tarefa *l){
+    tarefa *x,*y,*p;
+    x=l;
+    y=l;
+    if(l==NULL) 
+        return(l);
+    while(y->prox!=NULL){
+        y=y->prox;
+        if(y->prox!=NULL){
+            x=x->prox;
+            y=y->prox;
+        }
+    }
+    p=x->prox;
+    x->prox=NULL;
+    return(p);
+}
+
+tarefa *mergeSort(tarefa *l){
+    tarefa *e, *d, *mid;
+    if(l==NULL || l->prox==NULL){
+        return l;
+    }
+    mid=split(l);
+    e = mergeSort(l);
+    d = mergeSort(mid);
+    l=merge(e,d);
+    return(l);
+}
+
+//apagar
+void printa_tarefa(tarefa *t){
+    printf("\n\n- %s -\n\n", t->dados.nome);
+    printf("ID: %d\n", t->id);
+    printf("Inicio: %d/%d/%d \t",  t->dados.inicio.dia, t->dados.inicio.mes, t->dados.inicio.ano);
+    printf("%d:%d\n", t->dados.inicio.hora, t->dados.inicio.minuto);
+    printf("Fim: %d/%d/%d \t", t->dados.deadline.dia, t->dados.deadline.mes, t->dados.deadline.ano);
+    printf("%d:%d\n", t->dados.deadline.hora, t->dados.deadline.minuto);
+    printf("Duracao: %d\n", t->dados.duracao);
+}
+
+
+            //desespero
+            /*strcpy(lista_dia->dados.nome, lista->dados.nome);
+            lista_dia->id = lista->id;
+            lista_dia->dados.inicio.dia = lista->dados.inicio.dia;
+            lista_dia->dados.inicio.mes = lista->dados.inicio.mes;
+            lista_dia->dados.inicio.ano = lista->dados.inicio.ano;
+            lista_dia->dados.inicio.hora = lista->dados.inicio.hora;
+            lista_dia->dados.inicio.minuto = lista->dados.inicio.minuto;
+            lista_dia->dados.deadline.dia = lista->dados.deadline.dia;
+            lista_dia->dados.deadline.mes = lista->dados.deadline.mes;
+            lista_dia->dados.deadline.ano = lista->dados.deadline.ano;
+            lista_dia->dados.deadline.hora = lista->dados.deadline.hora;
+            lista_dia->dados.deadline.minuto = lista->dados.deadline.minuto;
+            lista_dia->dados.duracao = lista->dados.duracao;*/
+
+/*void agenda_do_dia(tarefa *lista, tarefa *lista_dia){
     struct tm *local;
     time_t t;
     int dia, mes ,ano;
@@ -216,35 +404,9 @@ void agenda_do_dia(tarefa *lista, tarefa *lista_dia){
             lista_dia->prox = (tarefa*) malloc(sizeof(tarefa));
             lista_dia = lista_dia->prox;
             lista_dia->prox = NULL;            
-        }       
+        }  
         lista = lista->prox;
-        
     }
+    lista_dia = mergeSort(lista_dia);
 }
-
-//apagar
-void printa_tarefa(tarefa *t){
-    printf("\n\n- %s -\n\n", t->dados.nome);
-    printf("ID: %d\n", t->id);
-    printf("Inicio: %d/%d/%d \t",  t->dados.inicio.dia, t->dados.inicio.mes, t->dados.inicio.ano);
-    printf("%d:%d\n", t->dados.inicio.hora, t->dados.inicio.minuto);
-    printf("Fim: %d/%d/%d \t", t->dados.deadline.dia, t->dados.deadline.mes, t->dados.deadline.ano);
-    printf("%d:%d\n", t->dados.deadline.hora, t->dados.deadline.minuto);
-    printf("Duracao: %d\n", t->dados.duracao);
-}
-
-
-            //desespero
-            /*strcpy(lista_dia->dados.nome, lista->dados.nome);
-            lista_dia->id = lista->id;
-            lista_dia->dados.inicio.dia = lista->dados.inicio.dia;
-            lista_dia->dados.inicio.mes = lista->dados.inicio.mes;
-            lista_dia->dados.inicio.ano = lista->dados.inicio.ano;
-            lista_dia->dados.inicio.hora = lista->dados.inicio.hora;
-            lista_dia->dados.inicio.minuto = lista->dados.inicio.minuto;
-            lista_dia->dados.deadline.dia = lista->dados.deadline.dia;
-            lista_dia->dados.deadline.mes = lista->dados.deadline.mes;
-            lista_dia->dados.deadline.ano = lista->dados.deadline.ano;
-            lista_dia->dados.deadline.hora = lista->dados.deadline.hora;
-            lista_dia->dados.deadline.minuto = lista->dados.deadline.minuto;
-            lista_dia->dados.duracao = lista->dados.duracao;*/
+*/

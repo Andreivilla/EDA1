@@ -31,6 +31,8 @@ void add_tempo(tempo*);
 void add_reg(reg*);
 tarefa* remove_tarefa(tarefa *lista, int id);
 void editar_tarefa(tarefa *lista, int id);
+int verifica_data(int dia, int mes, int ano, int hora, int minuto);
+tarefa *agenda_do_dia(tarefa *lista);
 
 //arquivos
 void carregar_arquivo(tarefa *lista);
@@ -38,11 +40,15 @@ void ler_linha(tarefa *t, FILE *fl);
 void salvar_linha(tarefa *t, FILE *fl);
 void salvar(tarefa *lista, int);
 
-//tarefas do dia
-void agenda_do_dia(tarefa *lista, tarefa*);
+
+//mergesort
+tarefa *merge(tarefa *e, tarefa *d);
+tarefa *split(tarefa *l);
+tarefa *mergeSort(tarefa *l);
 
 
 //apagar 
 void printa_tarefa(tarefa *t);
-void agenda_do_dia(tarefa *lista, tarefa*);
+
+
 

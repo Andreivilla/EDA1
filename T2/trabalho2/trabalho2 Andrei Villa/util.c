@@ -342,17 +342,6 @@ tarefa *mergeSort(tarefa *l){
     return(l);
 }
 
-//apagar
-void printa_tarefa(tarefa *t){
-    printf("\n\n- %s -\n\n", t->dados.nome);
-    printf("ID: %d\n", t->id);
-    printf("Inicio: %d/%d/%d \t",  t->dados.inicio.dia, t->dados.inicio.mes, t->dados.inicio.ano);
-    printf("%d:%d\n", t->dados.inicio.hora, t->dados.inicio.minuto);
-    printf("Fim: %d/%d/%d \t", t->dados.deadline.dia, t->dados.deadline.mes, t->dados.deadline.ano);
-    printf("%d:%d\n", t->dados.deadline.hora, t->dados.deadline.minuto);
-    printf("Duracao: %d\n", t->dados.duracao);
-}
-
 tarefa *otimiza(tarefa *lista){
     int verif = 0;
     tarefa *a = (tarefa*) malloc(sizeof(tarefa));

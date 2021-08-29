@@ -35,12 +35,13 @@ int main(int agrc, char *argv[]){
                     //cria lista de tarefas do dia
                     lista_tarefas_dia = agenda_do_dia(lista_tarefas);
                     //ordena tarefaz em ordem de deadline
-                    lista_tarefas_dia = mergeSort(lista_tarefas_dia);
+                    //lista_tarefas_dia = mergeSort(lista_tarefas_dia);
                     //otimiza
                     lista_tarefas_dia = otimiza(lista_tarefas_dia);
                     visualizar_tarefas(lista_tarefas_dia);
                 break;
             case '8'://SALVARA AGENDA DO DIA
+                
                 salvar(lista_tarefas_dia, 2);
                 printf("--arquivos salvos--\n");
                 

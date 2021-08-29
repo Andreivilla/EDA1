@@ -48,9 +48,3 @@ tarefa *mergeSort(tarefa *l);
 
 //otimiza
 tarefa *otimiza(tarefa *lista);
-
-//apagar 
-void printa_tarefa(tarefa *t);
-
-
-
